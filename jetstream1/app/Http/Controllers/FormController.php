@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 
 class FormController extends Controller
 {
+
+
     public function FormularzGet(Request $req){
         $req->validate([
             "imie"=> "required|min:4|max:15",
