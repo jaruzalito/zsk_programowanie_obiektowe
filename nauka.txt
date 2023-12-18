@@ -1,0 +1,95 @@
+WEB PHP: Route::resource('Pilka',App\Http\Controllers\PilkaController::class);
+
+DATABASE\MIGRATIONS
+ public function up(): void
+    {
+        Schema::create('pilkas', function (Blueprint $table) {
+            $table->id();
+            $table->timestamps();
+            $table->string('name');
+            $table->string('email');
+        });
+    }
+
+PILKACONTROLLER: 
+
+public function index()
+    {
+        return view('messi.showall', ["records"=>Pilka::all()]);
+    }
+
+public function create()
+    {
+        return view('messi.contactForm');
+    }
+
+
+public function store(Request $req)
+    {
+        $req->validate([
+            'name' => 'required | min:5 |max:10',
+            'email' => 'required | email | min:10 | max:20',
+            'emailConf' => 'same:email',
+            ],
+        [
+            'name.min' => ':attribute musi miec :min',
+            'emailConf.same' => ':attribute musi byc takie jak :other'
+        ]);
+        $newRecord = new Pilka();
+        $newRecord->name = $req->input('name');
+        $newRecord->email = $req->input('email');
+        $newRecord->save();
+
+
+    }
+
+
+VIEW!!!!! SHOWALL.BLADE.PHP
+
+
+   <table>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+
+        </tr>
+        @foreach ($records as $record)
+        <tr>
+            <td>{{$record->name}}</td>
+            <td>{{$record->email}}</td>
+
+
+
+        </tr>
+        @endforeach
+
+
+
+
+CONTACT FORM: 
+ <form action="{{Route('Pilka.store')}}" method="post">
+        @csrf
+        <label  for="name">
+            <input type="text" name="name" placeholder="Podaj name">
+            @error('name')
+            {{$message}}
+            @enderror
+        </label><br>
+        <label  for="email">
+        <input type="email" name="email" placeholder="Podaj email">
+            @error('email')
+            {{$message}}
+            @enderror
+        </label><br>
+        <label  for="email">
+        <input type="email" name="emailConf" placeholder="Podaj email">
+            @error('emailConf')
+            {{$message}}
+            @enderror
+        </label><br>
+        <input type="submit" value="submit">
+
+
+TWORZENIE MODELU: 
+
+php artisan make:model -mcrf Pilka
